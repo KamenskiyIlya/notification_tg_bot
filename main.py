@@ -76,10 +76,10 @@ def main():
     while True:
         for attempt in range(3):
             try:
-                result, timestamp = checking_for_new_checks(DEVMAN_TOKEN, timestamp)
+                devman_response, timestamp = checking_for_new_checks(DEVMAN_TOKEN, timestamp)
 
-                if result:
-                    text = generate_notification_text(result)
+                if devman_response:
+                    text = generate_notification_text(devman_response)
                     bot.send_message(chat_id=CHAT_ID, text=text)
             except telegram.error.TimedOut as e:
                     print(f'Вышло время ожидания ответа от telegram.\nОшибка: {e}')
