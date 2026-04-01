@@ -37,19 +37,7 @@ def checking_for_new_checks(timestamp=None, devman_token):
     return response_payload, timestamp
 
 
-def get_chat_info(bot, chat_id):
-    try:
-        chat = bot.get_chat(chat_id)
-        if chat.first_name:
-            user_name = chat.first_name
-            return user_name
-        return 'пользователь'
-    except Exception as e:
-        print(f'Не удалось получить имя пользователя.\nОшибка: {e}')
-        return 'пользователь'
-
-
-def send_notification(bot, chat_id, name, text):
+def send_notification(bot, chat_id, text):
     try:
         bot.send_message(chat_id=chat_id, text=text)
     except telegram.error.TimedOut as e:
@@ -63,8 +51,6 @@ def main()
     CHAT_ID = env('CHAT_ID')
     bot = telegram.Bot(token=BOT_TOKEN)
     timestamp = None
-
-    user_name = get_chat_info(bot, CHAT_ID)
 
     while True:
         try:
@@ -80,7 +66,7 @@ def main()
             lesson_url = attempt_inf['lesson_url']
             desicion = not attempt_inf['is_negative']
             text = (
-                f'{user_name}, у Вас проверили работу\n'
+                'У Вас проверили работу\n'
                 f'По уроку: {lesson_title}\n'
                 f'Ссылка на урок: {lesson_url}\n\n'
             )
@@ -96,7 +82,7 @@ def main()
                     'можно переходить к следующему уроку.'
                 )
 
-            send_notification(bot, CHAT_ID, user_name, text)
+            send_notification(bot, CHAT_ID, text)
 
 
 if __name__ == '__main__':
