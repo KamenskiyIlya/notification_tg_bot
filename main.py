@@ -3,10 +3,10 @@ import requests
 import telegram
 
 
-def get_latest_checks():
+def get_latest_checks(devman_token):
     url = 'https://dvmn.org/api/user_reviews/'
     headers = {
-        'Authorization': f'Token {DEVMAN_TOKEN}'
+        'Authorization': f'Token {devman_token}'
     }
     response = requests.get(url, headers=headers)
     response.raise_for_status()
@@ -14,10 +14,10 @@ def get_latest_checks():
     return response_payload
 
 
-def checking_for_new_checks(timestamp=None):
+def checking_for_new_checks(timestamp=None, devman_token):
     url = 'https://dvmn.org/api/long_polling/'
     headers = {
-        'Authorization': f'Token {DEVMAN_TOKEN}'
+        'Authorization': f'Token {devman_token}'
     }
     params = {}
 
@@ -68,7 +68,7 @@ def main()
 
     while True:
         try:
-            result, timestamp = long_pooling_check(timestamp)
+            result, timestamp = long_pooling_check(timestamp, DEVMAN_TOKEN)
         except requests.exceptions.ReadTimeout as e:
             print(f'Сервер не ответил, ошибка:\n {e}')
         except requests.exceptions.ConnectionError as e:
