@@ -24,7 +24,7 @@ def checking_for_new_checks(devman_token, timestamp=None):
     if timestamp:
         params['timestamp'] = timestamp
 
-    response = requests.get(url, headers=headers, params=params, timeout=5)
+    response = requests.get(url, headers=headers, params=params)
     response.raise_for_status()
     response_payload = response.json()
 
@@ -48,37 +48,40 @@ def main():
     while True:
         try:
             result, timestamp = checking_for_new_checks(DEVMAN_TOKEN, timestamp)
+            print(result)
+
+            if result:
+                attempt_inf = result['new_attempts'][0]
+                lesson_title = attempt_inf['lesson_title']
+                lesson_url = attempt_inf['lesson_url']
+                desicion = not attempt_inf['is_negative']
+                text = (
+                    'У Вас проверили работу\n'
+                    f'По уроку: {lesson_title}\n'
+                    f'Ссылка на урок: {lesson_url}\n\n'
+                )
+
+                if not desicion:
+                    text += (
+                        'Результат: В работе нашлись ошибки,'
+                        'необходимы правки.'
+                    )
+                else:
+                    text += (
+                        'Результат: Работа принята,'
+                        'можно переходить к следующему уроку.'
+                    )
+
+                try:
+                    bot.send_message(chat_id=CHAT_ID, text=text)
+                except telegram.error.TimedOut as e:
+                        print(f'Вышло время ожидания ответа от telegram.\nОшибка: {e}')
         except requests.exceptions.ReadTimeout as e:
             pass
         except requests.exceptions.ConnectionError as e:
             print(f'Отсутствует подключение к сети, ошибка:\n {e}')
 
-        if result:
-            attempt_inf = result['new_attempts'][0]
-            lesson_title = attempt_inf['lesson_title']
-            lesson_url = attempt_inf['lesson_url']
-            desicion = not attempt_inf['is_negative']
-            text = (
-                'У Вас проверили работу\n'
-                f'По уроку: {lesson_title}\n'
-                f'Ссылка на урок: {lesson_url}\n\n'
-            )
 
-            if not desicion:
-                text += (
-                    'Результат: В работе нашлись ошибки,'
-                    'необходимы правки.'
-                )
-            else:
-                text += (
-                    'Результат: Работа принята,'
-                    'можно переходить к следующему уроку.'
-                )
-
-            try:
-                bot.send_message(chat_id=chat_id, text=text)
-            except telegram.error.TimedOut as e:
-                    print(f'Вышло время ожидания ответа от telegram.\nОшибка: {e}')
 
 
 if __name__ == '__main__':
