@@ -37,13 +37,6 @@ def checking_for_new_checks(timestamp=None, devman_token):
     return response_payload, timestamp
 
 
-def send_notification(bot, chat_id, text):
-    try:
-        bot.send_message(chat_id=chat_id, text=text)
-    except telegram.error.TimedOut as e:
-        print(f'Вышло время ожидания ответа от telegram.\nОшибка: {e}')
-
-
 def main()
     env.read_env()
     DEVMAN_TOKEN = env('DEVMAN_TOKEN')
@@ -82,7 +75,10 @@ def main()
                     'можно переходить к следующему уроку.'
                 )
 
-            send_notification(bot, CHAT_ID, text)
+            try:
+                bot.send_message(chat_id=chat_id, text=text)
+            except telegram.error.TimedOut as e:
+                    print(f'Вышло время ожидания ответа от telegram.\nОшибка: {e}')
 
 
 if __name__ == '__main__':
