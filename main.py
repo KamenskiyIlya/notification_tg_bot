@@ -3,7 +3,7 @@ import requests
 import telegram
 
 
-def check():
+def get_latest_checks():
     url = 'https://dvmn.org/api/user_reviews/'
     headers = {
         'Authorization': f'Token {DEVMAN_TOKEN}'
@@ -14,7 +14,7 @@ def check():
     return response_payload
 
 
-def long_pooling_check(timestamp=None):
+def checking_for_new_checks(timestamp=None):
     url = 'https://dvmn.org/api/long_polling/'
     headers = {
         'Authorization': f'Token {DEVMAN_TOKEN}'
