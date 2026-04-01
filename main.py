@@ -14,7 +14,7 @@ def get_latest_checks(devman_token):
     return response_payload
 
 
-def checking_for_new_checks(timestamp=None, devman_token):
+def checking_for_new_checks(devman_token, timestamp=None):
     url = 'https://dvmn.org/api/long_polling/'
     headers = {
         'Authorization': f'Token {devman_token}'
@@ -24,7 +24,7 @@ def checking_for_new_checks(timestamp=None, devman_token):
     if timestamp:
         params['timestamp'] = timestamp
 
-    response = requests.get(url, headers=headers, params=params)
+    response = requests.get(url, headers=headers, params=params, timeout=5)
     response.raise_for_status()
     response_payload = response.json()
 
@@ -37,7 +37,7 @@ def checking_for_new_checks(timestamp=None, devman_token):
     return response_payload, timestamp
 
 
-def main()
+def main():
     env.read_env()
     DEVMAN_TOKEN = env('DEVMAN_TOKEN')
     BOT_TOKEN = env('TG_BOT_TOKEN')
@@ -47,9 +47,9 @@ def main()
 
     while True:
         try:
-            result, timestamp = long_pooling_check(timestamp, DEVMAN_TOKEN)
+            result, timestamp = checking_for_new_checks(DEVMAN_TOKEN, timestamp)
         except requests.exceptions.ReadTimeout as e:
-            print(f'Сервер не ответил, ошибка:\n {e}')
+            pass
         except requests.exceptions.ConnectionError as e:
             print(f'Отсутствует подключение к сети, ошибка:\n {e}')
 
