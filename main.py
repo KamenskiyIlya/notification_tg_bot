@@ -26,7 +26,7 @@ def checking_for_new_checks(devman_token, timestamp=None):
     if timestamp:
         params['timestamp'] = timestamp
 
-    response = requests.get(url, headers=headers, params=params, timeout=1)
+    response = requests.get(url, headers=headers, params=params)
     response.raise_for_status()
     response_payload = response.json()
 
@@ -69,28 +69,26 @@ def main():
     DEVMAN_TOKEN = env('DEVMAN_TOKEN')
     BOT_TOKEN = env('TG_BOT_TOKEN')
     CHAT_ID = env('CHAT_ID')
+    REQUESTS_DELAY = env.int('REQUESTS_DELAY', default=600)
     bot = telegram.Bot(token=BOT_TOKEN)
     timestamp = None
 
     while True:
-        for attempt in range(5):
+        for attempt in range(3):
             try:
                 result, timestamp = checking_for_new_checks(DEVMAN_TOKEN, timestamp)
-                print(result)
 
                 if result:
                     text = generate_notification_text(result)
-
-                    try:
-                        bot.send_message(chat_id=CHAT_ID, text=text)
-                    except telegram.error.TimedOut as e:
-                            print(f'Вышло время ожидания ответа от telegram.\nОшибка: {e}')
+                    bot.send_message(chat_id=CHAT_ID, text=text)
+            except telegram.error.TimedOut as e:
+                    print(f'Вышло время ожидания ответа от telegram.\nОшибка: {e}')
             except requests.exceptions.ReadTimeout as e:
-                print('попытка')
+                pass
             except requests.exceptions.ConnectionError as e:
                 print(f'Отсутствует подключение к сети, ошибка:\n {e}')
 
-            sleep(5)
+        sleep(REQUESTS_DELAY)
 
 
 if __name__ == '__main__':
