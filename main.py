@@ -1,3 +1,5 @@
+from time import sleep
+
 from environs import env
 import requests
 import telegram
@@ -37,6 +39,31 @@ def checking_for_new_checks(devman_token, timestamp=None):
     return response_payload, timestamp
 
 
+def generate_notification_text(result):
+    attempt_inf = result['new_attempts'][0]
+    lesson_title = attempt_inf['lesson_title']
+    lesson_url = attempt_inf['lesson_url']
+    desicion = not attempt_inf['is_negative']
+    text = (
+        'У Вас проверили работу\n'
+        f'По уроку: {lesson_title}\n'
+        f'Ссылка на урок: {lesson_url}\n\n'
+    )
+
+    if not desicion:
+        text += (
+            'Результат: В работе нашлись ошибки,'
+            'необходимы правки.'
+        )
+    else:
+        text += (
+            'Результат: Работа принята,'
+            'можно переходить к следующему уроку.'
+        )
+
+    return text
+
+
 def main():
     env.read_env()
     DEVMAN_TOKEN = env('DEVMAN_TOKEN')
@@ -51,26 +78,7 @@ def main():
             print(result)
 
             if result:
-                attempt_inf = result['new_attempts'][0]
-                lesson_title = attempt_inf['lesson_title']
-                lesson_url = attempt_inf['lesson_url']
-                desicion = not attempt_inf['is_negative']
-                text = (
-                    'У Вас проверили работу\n'
-                    f'По уроку: {lesson_title}\n'
-                    f'Ссылка на урок: {lesson_url}\n\n'
-                )
-
-                if not desicion:
-                    text += (
-                        'Результат: В работе нашлись ошибки,'
-                        'необходимы правки.'
-                    )
-                else:
-                    text += (
-                        'Результат: Работа принята,'
-                        'можно переходить к следующему уроку.'
-                    )
+                text = generate_notification_text(result)
 
                 try:
                     bot.send_message(chat_id=CHAT_ID, text=text)
