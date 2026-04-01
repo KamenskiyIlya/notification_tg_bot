@@ -85,7 +85,7 @@ if __name__ == '__main__':
                 f'Ссылка на урок: {lesson_url}\n\n'
             )
 
-            if desicion is False:
+            if not desicion:
                 text += (
                     'Результат: В работе нашлись ошибки,'
                     'необходимы правки.'
