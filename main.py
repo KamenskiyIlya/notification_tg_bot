@@ -26,7 +26,7 @@ def checking_for_new_checks(devman_token, timestamp=None):
     if timestamp:
         params['timestamp'] = timestamp
 
-    response = requests.get(url, headers=headers, params=params)
+    response = requests.get(url, headers=headers, params=params, timeout=1)
     response.raise_for_status()
     response_payload = response.json()
 
@@ -73,23 +73,24 @@ def main():
     timestamp = None
 
     while True:
-        try:
-            result, timestamp = checking_for_new_checks(DEVMAN_TOKEN, timestamp)
-            print(result)
+        for attempt in range(5):
+            try:
+                result, timestamp = checking_for_new_checks(DEVMAN_TOKEN, timestamp)
+                print(result)
 
-            if result:
-                text = generate_notification_text(result)
+                if result:
+                    text = generate_notification_text(result)
 
-                try:
-                    bot.send_message(chat_id=CHAT_ID, text=text)
-                except telegram.error.TimedOut as e:
-                        print(f'Вышло время ожидания ответа от telegram.\nОшибка: {e}')
-        except requests.exceptions.ReadTimeout as e:
-            pass
-        except requests.exceptions.ConnectionError as e:
-            print(f'Отсутствует подключение к сети, ошибка:\n {e}')
+                    try:
+                        bot.send_message(chat_id=CHAT_ID, text=text)
+                    except telegram.error.TimedOut as e:
+                            print(f'Вышло время ожидания ответа от telegram.\nОшибка: {e}')
+            except requests.exceptions.ReadTimeout as e:
+                print('попытка')
+            except requests.exceptions.ConnectionError as e:
+                print(f'Отсутствует подключение к сети, ошибка:\n {e}')
 
-
+            sleep(5)
 
 
 if __name__ == '__main__':
