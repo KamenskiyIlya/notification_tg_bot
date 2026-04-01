@@ -56,7 +56,7 @@ def send_notification(bot, chat_id, name, text):
         print(f'Вышло время ожидания ответа от telegram.\nОшибка: {e}')
 
 
-if __name__ == '__main__':
+def main()
     env.read_env()
     DEVMAN_TOKEN = env('DEVMAN_TOKEN')
     BOT_TOKEN = env('TG_BOT_TOKEN')
@@ -97,3 +97,7 @@ if __name__ == '__main__':
                 )
 
             send_notification(bot, CHAT_ID, user_name, text)
+
+
+if __name__ == '__main__':
+    main()
