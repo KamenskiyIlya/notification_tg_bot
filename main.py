@@ -16,7 +16,7 @@ def get_latest_checks(devman_token):
     return response_payload
 
 
-def checking_for_new_checks(devman_token, timestamp=None):
+def get_new_checks(devman_token, timestamp=None):
     url = 'https://dvmn.org/api/long_polling/'
     headers = {
         'Authorization': f'Token {devman_token}'
@@ -76,7 +76,7 @@ def main():
     while True:
         for attempt in range(3):
             try:
-                devman_response, timestamp = checking_for_new_checks(
+                devman_response, timestamp = get_new_checks(
                     DEVMAN_TOKEN,
                     timestamp
                 )
