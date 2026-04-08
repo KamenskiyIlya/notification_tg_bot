@@ -37,7 +37,7 @@ def configuration_logger(bot_token, chat_id):
         encoding='utf-8'        
     )
     file_handler.setFormatter(formatter)
-    logger.addHandler
+    logger.addHandler(file_handler)
     
     tg_handler = TelegramLogsHandler(bot_token, chat_id)
     tg_handler.setFormatter(formatter)
