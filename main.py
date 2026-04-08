@@ -1,5 +1,6 @@
 from time import sleep
 import logging
+import sys
 from logging.handlers import RotatingFileHandler
 
 from environs import env
@@ -38,6 +39,10 @@ def configuration_logger(bot_token, chat_id):
     )
     file_handler.setFormatter(formatter)
     logger.addHandler(file_handler)
+    
+    console_handler = logging.StreamHandler(sys.stdout)
+    console_handler.setFormatter(formatter)
+    logger.addHandler(console_handler)
     
     tg_handler = TelegramLogsHandler(bot_token, chat_id)
     tg_handler.setFormatter(formatter)
