@@ -108,7 +108,7 @@ def main():
     env.read_env()
     DEVMAN_TOKEN = env('DEVMAN_TOKEN')
     BOT_TOKEN = env('TG_BOT_TOKEN')
-    LOG_BOT_TOKEN = env('TG_BOT_TOKEN')
+    LOG_BOT_TOKEN = env('LOG_BOT_TOKEN')
     CHAT_ID = env('CHAT_ID')
     ADMIN_CHAT_ID = env('ADMIN_CHAT_ID')
     REQUESTS_DELAY = env.int('REQUESTS_DELAY', default=600)
