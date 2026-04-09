@@ -80,8 +80,8 @@ def get_new_checks(devman_token, timestamp=None):
         return None, new_timestamp
     elif response_payload['status'] == 'found':
         new_timestamp = response_payload['last_attempt_timestamp']
-
-    return response_payload, timestamp
+        return response_payload, new_timestamp
+    
 
 
 def generate_notification_text(result):
