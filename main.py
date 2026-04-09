@@ -44,9 +44,10 @@ def configuration_logger(bot_token, chat_id):
     console_handler.setFormatter(formatter)
     logger.addHandler(console_handler)
     
-    tg_handler = TelegramLogsHandler(bot_token, chat_id)
-    tg_handler.setFormatter(formatter)
-    logger.addHandler(tg_handler)
+    if bot_token and chat_id:
+        tg_handler = TelegramLogsHandler(bot_token, chat_id)
+        tg_handler.setFormatter(formatter)
+        logger.addHandler(tg_handler)
     
     return logger
 
@@ -113,9 +114,9 @@ def main():
     env.read_env()
     DEVMAN_TOKEN = env('DEVMAN_TOKEN')
     BOT_TOKEN = env('TG_BOT_TOKEN')
-    LOG_BOT_TOKEN = env('LOG_BOT_TOKEN')
+    LOG_BOT_TOKEN = env('LOG_BOT_TOKEN', default=None)
     CHAT_ID = env('CHAT_ID')
-    ADMIN_CHAT_ID = env('ADMIN_CHAT_ID')
+    ADMIN_CHAT_ID = env('ADMIN_CHAT_ID', default=None)
     REQUESTS_DELAY = env.int('REQUESTS_DELAY', default=600)
     
     logger = configuration_logger(LOG_BOT_TOKEN, ADMIN_CHAT_ID)
