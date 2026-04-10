@@ -133,7 +133,7 @@ def main():
                     f'Ошибка: {e}.'
                 )
             except requests.exceptions.ReadTimeout:
-                logger.warning('Вышло время ожидания ответа от сайта.')
+                pass
             except requests.exceptions.ConnectionError as e:
                 logger.error(f'Отсутствует подключение к сети, ошибка: {e}')
             except Exception:
