@@ -51,16 +51,6 @@ def configuration_logger(bot_token, chat_id):
     
     return logger
 
-def get_latest_checks(devman_token):
-    url = 'https://dvmn.org/api/user_reviews/'
-    headers = {
-        'Authorization': f'Token {devman_token}'
-    }
-    response = requests.get(url, headers=headers)
-    response.raise_for_status()
-    response_payload = response.json()
-    return response_payload
-
 
 def get_new_checks(devman_token, timestamp=None):
     url = 'https://dvmn.org/api/long_polling/'
