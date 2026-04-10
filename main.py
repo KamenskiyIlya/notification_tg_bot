@@ -112,16 +112,16 @@ def generate_notification_text(result):
 
 def main():
     env.read_env()
-    DEVMAN_TOKEN = env('DEVMAN_TOKEN')
-    BOT_TOKEN = env('TG_BOT_TOKEN')
-    LOG_BOT_TOKEN = env('LOG_BOT_TOKEN', default=None)
-    CHAT_ID = env('CHAT_ID')
-    ADMIN_CHAT_ID = env('ADMIN_CHAT_ID', default=None)
-    REQUESTS_DELAY = env.int('REQUESTS_DELAY', default=600)
+    devman_token = env('DEVMAN_TOKEN')
+    bot_token = env('TG_BOT_TOKEN')
+    log_bot_token = env('LOG_BOT_TOKEN', default=None)
+    chat_id = env('CHAT_ID')
+    admin_chat_id = env('ADMIN_CHAT_ID', default=None)
+    requests_delay = env.int('REQUESTS_DELAY', default=600)
     
-    logger = configuration_logger(LOG_BOT_TOKEN, ADMIN_CHAT_ID)
+    logger = configuration_logger(log_bot_token, admin_chat_id)
 
-    bot = telegram.Bot(token=BOT_TOKEN)
+    bot = telegram.Bot(token=bot_token)
     timestamp = None
     
     logger.info('Бот запущен')
@@ -130,13 +130,13 @@ def main():
         for attempt in range(3):
             try:
                 devman_response, timestamp = get_new_checks(
-                    DEVMAN_TOKEN,
+                    devman_token,
                     timestamp
                 )
 
                 if devman_response:
                     text = generate_notification_text(devman_response)
-                    bot.send_message(chat_id=CHAT_ID, text=text)
+                    bot.send_message(chat_id=chat_id, text=text)
             except telegram.error.TimedOut as e:
                 logger.warning(
                     'Вышло время ожидания ответа от telegram. '
@@ -149,7 +149,7 @@ def main():
             except Exception:
                 logger.exception('Произошла неожиданная ошибка')
 
-        sleep(REQUESTS_DELAY)
+        sleep(requests_delay)
 
 
 if __name__ == '__main__':
