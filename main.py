@@ -136,6 +136,8 @@ def main():
                 pass
             except requests.exceptions.ConnectionError as e:
                 logger.error(f'Отсутствует подключение к сети, ошибка: {e}')
+                if attempt == 2:
+                    sleep(requests_delay)
             except Exception:
                 logger.exception('Произошла неожиданная ошибка')
 
